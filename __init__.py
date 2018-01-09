@@ -1,6 +1,11 @@
 from flask import Flask, render_template
+from models.login import loginpage
+from models.disconnect import logout
 
 app = Flask(__name__)
+
+app.register_blueprint(loginpage)
+app.register_blueprint(logout)
 
 @app.route("/")
 def home():

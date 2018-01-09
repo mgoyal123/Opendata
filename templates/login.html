@@ -8,6 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>Login | </title>
+    <script src="https://apis.google.com/js/client:platform.js?onload=start"></script>
 
     <!-- Bootstrap -->
     <link href="../static/vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -50,12 +51,34 @@
                   <a href="#signup" class="to_register"> Create Account </a>
                 </p>
 
+                <p class="change_link">Or Sign in with:
+
+                  <div id="signInButton">
+                    <span class="g-signin"
+                        data-scope="openid email"
+                        data-clientid="739130593340-gqk4jicvnva11kslbv8gi66gduc1p7mj.apps.googleusercontent.com"
+                        data-redirecturi="postmessage"
+                        data-accesstype="offline"
+                        data-cookiepolicy="single_host_origin"
+                        data-callback="signInCallback"
+                        data-approvalprompt="force">
+                    </span>
+                  </div>
+
+                  <div>
+                    <fb:login-button scope="public_profile,email" onlogin= "sendTokenToServer();"  id="fbstate" data-name={{STATE}}>
+                      <a href='javascript:sendTokenToServer()'> Login with Facebook </a>
+                    </fb:login-button>
+                  </div>
+                </p>
+
+                <div id="result"></div>
                 <div class="clearfix"></div>
                 <br />
 
                 <div>
                   <h1><i class="fa fa-paw"></i> Edvantics!</h1>
-                  <p>©2017 All Rights Reserved</p>
+                  <p>©2018 All Rights Reserved</p>
                 </div>
               </div>
             </form>
@@ -91,7 +114,7 @@
 
                 <div>
                   <h1><i class="fa fa-paw"></i> Edvantics!</h1>
-                  <p>©2017 All Rights Reserved</p>
+                  <p>©2018 All Rights Reserved</p>
                 </div>
               </div>
             </form>
@@ -99,5 +122,9 @@
         </div>
       </div>
     </div>
+
+    <!-- jQuery -->
+    <script src="../static/vendors/jquery/dist/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename='js/login.js') }}" id="state" data-name={{STATE}}></script>
   </body>
 </html>
