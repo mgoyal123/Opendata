@@ -1,5 +1,5 @@
 from flask import Flask, render_template, Blueprint
-from flask import request, redirect
+from flask import request, redirect,jsonify, url_for, g
 from flask import flash
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import FlowExchangeError
@@ -10,8 +10,11 @@ from flask import session as login_session
 import requests
 import random
 import string
-# from user import *
+from dbconnect import *
+from flask_httpauth import HTTPBasicAuth
+from user import *
 
+auth = HTTPBasicAuth()
 
 loginpage = Blueprint("login", __name__)
 CLIENT_ID = json.loads(open
@@ -29,6 +32,53 @@ def showLogin():
                     for x in xrange(32))
     login_session['state'] = state
     return render_template('login.html', STATE=state)
+
+@loginpage.route('/signup', methods=['POST'])
+def register():
+    name = request.form['name']
+    email = request.form['email']
+    password = request.form['password']
+
+    login_session['provider'] = 'native'
+    login_session['username'] = name
+    login_session['email'] = email
+    login_session['password'] = password
+
+    if session.query(User).filter_by(email = email).first() is not None:
+
+        flash("User already exists.Please Login..")
+        return redirect(url_for('login.showLogin'))
+
+    login_session['user_id'] = createUser(login_session)
+    flash("You have succesfully registered as %s" % login_session['username'])
+    return redirect(url_for('home'))
+
+
+@loginpage.route('/signin', methods=['POST'])
+def checkPwd():
+    email = request.form['useremail']
+    password = request.form['userpassword']
+    if(verify_password(email,password)):
+        flash("You are now logged in as %s" % login_session['username'])
+        return redirect(url_for('home'))
+    else:
+        flash(u'Email and password do not match,Please try again','error')
+        return redirect(url_for('login.showLogin'))
+
+
+@auth.verify_password
+def verify_password(email, password):
+    user = getUserInfo(getUserId(email))
+    # user = session.query(User).filter_by(email = email).first()
+    if not user or not user.verify_password(password):
+        return False
+    g.user = user
+    login_session['provider'] = 'native'
+    login_session['user_id'] = user.id
+    login_session['username'] = user.name
+    login_session['email'] = user.email
+    login_session['password'] = ""
+    return True
 
 
 # Login with google account using google api
@@ -91,6 +141,7 @@ def gconnect():
     login_session['provider'] = 'google'
     login_session['access_token'] = credentials.access_token
     login_session['gplus_id'] = gplus_id
+    login_session['password'] = 'oauthtoken'
 
     # Get user info
     userinfo_url = "https://www.googleapis.com/oauth2/v1/userinfo"
@@ -100,22 +151,17 @@ def gconnect():
     data = answer.json()
 
     login_session['username'] = data['name']
-    login_session['picture'] = data['picture']
     login_session['email'] = data['email']
 
-    # user_id = getUserId(login_session['email'])
-    # if not user_id:
-    #     user_id = createUser(login_session)
-    # login_session['user_id'] = user_id
+    user_id = getUserId(login_session['email'])
+    if not user_id:
+        user_id = createUser(login_session)
+    login_session['user_id'] = user_id
 
     output = ''
     output += '<h1>Welcome, '
     output += login_session['username']
     output += '!</h1>'
-    output += '<img src="'
-    output += login_session['picture']
-    output += ' " style = "width: 300px; height: 300px;border-radius: 150px; '
-    output += '-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
     flash("You are now logged in as %s" % login_session['username'])
     return output
 
@@ -155,26 +201,16 @@ def fbconnect():
     login_session['email'] = data['email']
     login_session['facebook_id'] = data['id']
     login_session['access_token'] = token
+    login_session['password'] = 'oauthtoken'
 
-    url = ('https://graph.facebook.com/v2.8/me/picture?access_token=%s&'
-           'redirect=0&height=200&width=200' % access_token)
-    h = httplib2.Http()
-    result = h.request(url, 'GET')[1]
-    data = json.loads(result)
-    login_session['picture'] = data['data']['url']
-
-    # user_id = getUserId(login_session['email'])
-    # if not user_id:
-    #     user_id = createUser(login_session)
-    # login_session['user_id'] = user_id
+    user_id = getUserId(login_session['email'])
+    if not user_id:
+        user_id = createUser(login_session)
+    login_session['user_id'] = user_id
 
     output = ''
     output += '<h1>Welcome, '
     output += login_session['username']
     output += '!</h1>'
-    output += '<img src="'
-    output += login_session['picture']
-    output += ' " style = "width: 300px; height: 300px;border-radius: 150px;'
-    output += '-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
     flash("You are now logged in as %s" % login_session['username'])
     return output

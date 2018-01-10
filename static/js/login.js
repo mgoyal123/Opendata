@@ -72,3 +72,8 @@ function sendTokenToServer() {
 		});
 	});
 }
+$(document).ready(function(){
+                    setTimeout(function() {
+            			$('#messages').fadeOut('fast');
+            		}, 7000);
+        		});

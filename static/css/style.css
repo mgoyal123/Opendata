@@ -1,0 +1,18 @@
+.error {
+	color: red;
+}
+
+.flash {
+	text-decoration: none;
+}
+
+.flash li {
+	list-style-type: none;
+	text-align: center;
+
+}
+
+.loginflash {
+	width:100%;
+	background-color: #D3D3D3;
+}
