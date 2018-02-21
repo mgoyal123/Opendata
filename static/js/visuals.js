@@ -21,6 +21,11 @@ $('#statedata').change(function(){
   drawUnivCharts(univ_data);
 })
 
+$('#reset').click(function(){
+  dc.filterAll();
+  dc.renderAll();
+})
+
 function drawUnivCharts(data){
   var ndx = crossfilter(data),
   typeDimension  = ndx.dimension(function(d) {return d.type;}),
