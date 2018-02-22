@@ -21,39 +21,25 @@ app.register_blueprint(logout)
 @app.route("/")
 # @auth.login_required
 def home():
-	conn = MySQLdb.Connect(host='edvantics-opendata.cswt8s1fa1ht.us-east-2.rds.amazonaws.com', user='root', passwd='opendata', db='aishe',compress=1,cursorclass=MySQLdb.cursors.DictCursor)
-	# conn = MySQLdb.Connect(host='localhost', user='root', passwd='root', db='aishe',compress=1,cursorclass=MySQLdb.cursors.DictCursor)
+	# conn = MySQLdb.Connect(host='edvantics-opendata.cswt8s1fa1ht.us-east-2.rds.amazonaws.com', user='root', passwd='opendata', db='aishe',compress=1,cursorclass=MySQLdb.cursors.DictCursor)
+	conn = MySQLdb.Connect(host='localhost', user='root', passwd='root', db='aishe',compress=1,cursorclass=MySQLdb.cursors.DictCursor)
 	cursor = conn.cursor()
-	# cursor.execute("select a.type, count(b.type_id) as count from ref_university_type as a join ref_university as b where a.id = b.type_id group by a.id, a.type order by a.id;")
-	# cursor.execute("select a.speciality_id, b.speciality, a.type_id, c.type, count(a.id) as count from university as a left join ref_speciality as b on a.speciality_id = b.id join ref_university_type as c where c.id = a.type_id group by a.speciality_id, b.speciality, c.id, c.type")
 	cursor.execute("select b.speciality, c.type, d.name, count(a.id) as count from university as a left join ref_speciality as b on a.speciality_id = b.id join ref_university_type as c on c.id = a.type_id join ref_state as d where a.state_code = d.st_code group by a.speciality_id, b.speciality, c.id, c.type, d.name");
 	data = cursor.fetchall()
-	univs_by_type = []
-	# for row in data:
-		# print row
-		# if row.count <= 43:
-		# 	if 
-		# 	univ_by_type = {
-		# 	'Type_id' : row["id"],
-		# 	'Type' : row["type"],
-		# 	'Count' : row["count"]
-		# 	}
-		# else:
-		# 	univ_by_type = {
-		# 	'Type_id' : row["id"],
-		# 	'Type' : row["type"],
-		# 	'Count' : row["count"]
-		# 	}
+	univs_data = modifyNullSpeciality(data)
+	cursor.execute("select a.management, c.speciality, d.name, count(b.id) as count from ref_institution_management as a join college_institution as b left join ref_speciality as c on b.speciality_id = c.id join ref_state as d on b.state_code = d.st_code where a.id = b.management_id group by a.management, c.speciality, d.name")
+	data = cursor.fetchall()
+	college_data = modifyNullSpeciality(data)
+	comibed_data = {'university' : univs_data, 'college' : college_data}
+	return render_template('institutions.html', DATA=json.dumps(comibed_data))
 
-		# univs_by_type.append(univs_by_type)
+def modifyNullSpeciality(data):
+	temp = []
 	for row in data:
 		if row["speciality"] == None:
 			row["speciality"] = "General"
-
-		univs_by_type.append(row)
-	return render_template('index.html', DATA=json.dumps(univs_by_type))
-
-
+		temp.append(row)
+	return temp
 
 
 if __name__ == "__main__":
