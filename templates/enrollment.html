@@ -5,19 +5,7 @@
                     <!-- top tiles -->
           <div class="row tile_count">
             <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
-              <span class="count_top"><i class="fa fa-institution"></i> Total Universities</span>
-              <div class="count">752</div>
-            </div>
-            <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
-              <span class="count_top"><i class="fa fa-institution"></i>Total Colleges</span>
-              <div class="count">35.1K</div>
-            </div>
-            <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
-              <span class="count_top"><i class="fa fa-institution"></i>Average Colleges<br> per lakh population</span>
-              <div class="count">28</div>
-            </div>
-            <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
-              <span class="count_top"><i class="fa fa-user"></i> Total Students</span>
+              <span class="count_top"><i class="fa fa-user"></i> Total Enrolled</span>
               <div class="count">34.5M</div>
             </div>
             <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
@@ -28,12 +16,25 @@
               <span class="count_top"><i class="fa fa-female"></i>  Total Females</span>
               <div class="count">15.9M</div>
             </div>
+            <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+              <span class="count_top"><i class="fa fa-user"></i>Minority Enrolment</span>
+              <div class="count">2.29M</div>
+            </div>
+            <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+              <span class="count_top"><i class="fa fa-institution"></i>Average Enrollemnt<br>per College</span>
+              <div class="count">721</div>
+            </div>
+            <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+              <span class="count_top"><i class="fa fa-graduation-cap"></i>Total Outurn</span>
+              <div class="count">8.84M</div>
+            </div>
+        
           </div>
           <!-- /top tiles -->
           <div class="">
             <div class="page-title">
               <div class="title_left">
-                <h3>Institutions</h3>
+                <h3>Enrolment</h3>
               </div>
 
               <div class="title_right">
@@ -87,52 +88,25 @@
               <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel">
                   <div class="x_title">
-                    <h2>Universities</h2>
+                    <h2>Enrolment by Level</h2>
                     <div class="clearfix"></div>
                   </div>
                   <div class="x_content"> 
-                    <div class="col-md-5 col-sm-12 col-xs-12 text-center">
-                    	<h5>Universities By Type</h5>
-                    	<div id="chart-univ-type"></div>
-                    </div>
-                    <div class="col-md-5 col-sm-12 col-xs-12 text-center">
-                    	<h5>Universities By Speciality</h5>
-                    	<div id="chart-univ-speciality"></div>
-                    </div>
-                    <div class="col-md-2 col-sm-2 col-xs-2">
-                    	<p class="text-right" id="reset" class="reset">Reset</p>
-                    </div>
-                 </div>
-
-                  <div class="x_title">
-                    <h2>Colleges</h2>
-                    <div class="clearfix"></div>
-                  </div>
-                  <div class="x_content">
-                  	<div class="col-md-5 col-sm-12 col-xs-12 text-center">
-                    	<h5>Colleges By Type</h5>
-                    	<div id="chart-college-type"></div>
-                    </div>
-                    <div class="col-md-7 col-sm-12 col-xs-12 text-center">
-                    	<h5>Colleges By Speciality</h5>
-                    	<div id="chart-college-speciality"></div>
-                    </div>
-                      
-                      
+                    <div id="chart-enrolment-level"></div>
                   </div>
 
                   <div class="x_title">
-                    <h2>Top and Bottom States</h2>
+                    <h2>Top 10 disciplines with highest enrolment</h2>
                     <div class="clearfix"></div>
                   </div>
                   <div class="x_content">
-                  	<div class="col-md-6 col-sm-12 col-xs-12 text-center">
-                    	<h5>Top 10 States</h5>
-                    	<div id="chart-top-college"></div>
+                    <div class="col-md-6 col-sm-12 col-xs-12 text-center">
+                      <h5>Top UG Disciplines</h5>
+                      <div class="dc-discipline-chart" id="chart-top-ug"></div>
                     </div>
                     <div class="col-md-6 col-sm-12 col-xs-12 text-center">
-                    	<h5>Bottom 10 States</h5>
-                    	<div id="chart-bottom-college"></div>
+                      <h5>Top PG Disciplines</h5>
+                      <div class="dc-discipline-chart" id="chart-top-pg"></div>
                     </div>   
                   </div>
                 </div>
@@ -168,5 +142,5 @@
     <!-- Custom Theme Scripts -->
     <script src="../static/js/custom.min.js"></script>
     <script src="../static/js/script.js"></script>
-    <script src="{{ url_for('static', filename='js/inst_visuals.js') }}" id="data" data-name="{{DATA}}"></script>
+    <script src="{{ url_for('static', filename='js/enroll_visuals.js') }}" id="data" data-name="{{DATA}}"></script>
 {% endblock %}
