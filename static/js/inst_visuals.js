@@ -78,6 +78,8 @@ function drawCharts(univ_data,college_data){
     .dimension(typeDimension)
     .group(typeCountGroup);
 
+  univ_by_type_chart.ordinalColors(['#3498DB', '#9B59B6', '#1ABB9C', '#9CC2CB','#34495E','#1b8085']);
+
 
   univ_by_speciality_chart
    .width(600)
@@ -85,21 +87,17 @@ function drawCharts(univ_data,college_data){
    .x(d3.scale.ordinal())
    .xUnits(dc.units.ordinal)
    .brushOn(false)
-   .yAxisLabel("Count")
-   .xAxisLabel("Speciality")
+   .yAxisLabel("-------- Count --------")
+   .xAxisLabel("-------- Speciality --------")
    .renderLabel(true)
-   .margins({top: 10, right: 50, bottom: 130, left: 40})
+   .margins({top: 10, right: 50, bottom: 145, left: 40})
    .elasticY(true)
    .elasticX(true)
    .gap(20)
    .dimension(univSpecialityDimension)
-   .group(filteredUnivGroup)
-   .renderlet(function (chart) {
-     chart.selectAll('g.x text')
-        .attr('dx', '-30')
-        .attr('transform', "translate(-15,0) rotate(-75)");
-     });
+   .group(filteredUnivGroup);
 
+   univ_by_speciality_chart.ordinalColors(['#1ABB9C']);
    univ_by_speciality_chart.ordering(function(d) { return -d.value });
   // console.log(college_data);
   var ndx1 = crossfilter(college_data),
@@ -123,24 +121,23 @@ function drawCharts(univ_data,college_data){
     .dimension(managementDimension)
     .group(countGroup);
 
+  colg_by_type_chart.ordinalColors(['#3498DB', '#9B59B6', '#1ABB9C', '#9CC2CB','#34495E','#1b8085']);
+
   colg_by_speciality_chart
    .width(600)
    .height(400)
    .x(d3.scale.ordinal())
    .xUnits(dc.units.ordinal)
    .brushOn(false)
-   .yAxisLabel("Count")
-   .xAxisLabel("Speciality")
-   .margins({top: 10, right: 50, bottom: 120, left: 40})
+   .yAxisLabel("-------- Count --------")
+   .xAxisLabel("-------- Speciality --------")
+   .margins({top: 10, right: 50, bottom: 130, left: 50})
    .elasticY(true)
    .elasticX(true)
    .dimension(colgSpecialityDimension)
-   .group(filteredColgGroup)
-   .renderlet(function (chart) {
-     chart.selectAll('g.x text')
-        .attr('dx', '-30')
-        .attr('transform', "translate(-15,0) rotate(-75)");
-     });
+   .group(filteredColgGroup);
+
+   colg_by_speciality_chart.ordinalColors(['#1ABB9C']);
    colg_by_speciality_chart.ordering(function(d) { return -d.value });
 
   dc.renderAll();

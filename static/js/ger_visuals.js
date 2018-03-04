@@ -29,8 +29,7 @@ function drawCharts(avg_ger_data, college_data){
    .gap(8);
   
 
-   state_ger_chart.filter = function() {};
-
+   state_ger_chart.filter = function() {};  
 
    state_ger_chart.ordinalColors(['#1ABB9C']);
    state_ger_chart.ordering(function(d) { return +d.value });
@@ -52,7 +51,7 @@ function drawCharts(avg_ger_data, college_data){
       .dimension(specilisationDimension)
       .group(typeCountGroup);
 
-    college_by_specilisation_chart.ordinalColors(['#3498DB', '#9B59B6', '#1ABB9C', '#9CC2CB','#34495E','#1b8085'])
+    college_by_specilisation_chart.ordinalColors(['#3498DB', '#9B59B6', '#1ABB9C', '#9CC2CB','#34495E','#1b8085']);
     college_by_specilisation_chart.filter = function() {};
 
  
