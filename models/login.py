@@ -51,7 +51,7 @@ def register():
 
     login_session['user_id'] = createUser(login_session)
     flash("You have succesfully registered as %s" % login_session['username'])
-    return redirect(url_for('home'))
+    return redirect(url_for('showGER'))
 
 
 @loginpage.route('/signin', methods=['POST'])
@@ -60,7 +60,7 @@ def checkPwd():
     password = request.form['userpassword']
     if(verify_password(email,password)):
         flash("You are now logged in as %s" % login_session['username'])
-        return redirect(url_for('home'))
+        return redirect(url_for('showGER'))
     else:
         flash(u'Email and password do not match,Please try again','error')
         return redirect(url_for('login.showLogin'))

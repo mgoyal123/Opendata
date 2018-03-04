@@ -27,6 +27,53 @@ conn = MySQLdb.Connect(host='edvantics-opendata.cswt8s1fa1ht.us-east-2.rds.amazo
 cursor = conn.cursor()
 
 @app.route("/")
+@app.route('/GER/')
+def showGER():
+	cursor.execute("select x.name, x.ger from (select a.name, sum(b.enrollment_count)/c.total*100 as ger from ref_state as a join enrolment as b on a.st_code = b.state_code join total_eligible_population as c on c.state = a.name group by a.name,c.total order by ger) as x where x.ger <= 23.55");
+	avg_ger_data = cursor.fetchall()
+	
+	cursor.execute("select a.name, sum(b.enrollment_count)/c.total*100 as ger from ref_state as a join enrolment as b on a.st_code = b.state_code join total_eligible_population as c on c.state = a.name group by a.name,c.total order by ger desc limit 10");
+	highest_ger = cursor.fetchall()
+
+	cursor.execute("select count(x.district_code) as count, (select count(dist_code) from ref_district) as total from (select district_code, count(id) as count from college_institution group by district_code order by count) as x where x.count < 10;")
+	districts_data = cursor.fetchone()
+	districts_ratio = (1.0*districts_data["count"]/districts_data["total"])*100
+
+	cursor.execute("select count(state_code) as count from college_per_lakh_population where college_per_lakh < (select avg(college_per_lakh) from college_per_lakh_population)")
+	data = cursor.fetchone()
+	college_per_lakh = (1.0*data["count"]/36)*100
+
+	cursor.execute("select count(state_code) as count from college_per_lakh_population where average_enrollment < (select avg(average_enrollment) from college_per_lakh_population)")
+	data = cursor.fetchone()
+	average_enrollment = (1.0*data["count"]/36)*100
+
+	cursor.execute("select count(state) as count from pupil_teacher_ratio where pupil_teacher_ratio < (select avg(pupil_teacher_ratio) from pupil_teacher_ratio);")
+	data = cursor.fetchone()
+	pupil_teacher_ratio = (1.0*data["count"]/36)*100
+
+
+	cursor.execute("select a.level, sum(b.appeared_total) as total_appeared, sum(b.passed_total) as total_passed from ref_course_level as a join examination_result as b where a.id = b.course_level_id group by a.level order by a.level desc")
+	outturn_data = cursor.fetchall()
+	outturn_percentage = []
+	for row in outturn_data:
+		outturn = int((row["total_passed"]/row["total_appeared"])*100)
+		temp = {'level': row["level"], 'pass_percent': outturn, 'pass' : row["total_passed"]}
+		outturn_percentage.append(temp)
+
+	cursor.execute("select a.speciality, count(b.id) as count from ref_speciality as a right join college_institution as b on a.id = b.speciality_id group by a.speciality order by count desc;")
+	college_data = cursor.fetchall()
+	college_data = modifyNullSpeciality(college_data)
+	
+	data = {
+	'avg_ger_data' : avg_ger_data,
+	'college_data' : college_data
+	}
+	return render_template('ger.html', DATA=json.dumps(data), districts_ratio=districts_ratio, 
+		outturn=outturn_percentage, highest_ger=highest_ger, college_per_lakh=college_per_lakh,
+		average_enrollment=average_enrollment, pupil_teacher_ratio=pupil_teacher_ratio)
+	# return render_template('temp.html')
+
+
 @app.route("/institutions/")
 # @auth.login_required
 def showInstitutes():
@@ -71,35 +118,6 @@ def showEnrolment():
 	data = cursor.fetchall()
 	return render_template('enrollment.html', DATA=json.dumps(data))
 
-@app.route('/GER/')
-def showGER():
-	cursor.execute("select x.name, x.ger from (select a.name, sum(b.enrollment_count)/c.total*100 as ger from ref_state as a join enrolment as b on a.st_code = b.state_code join total_eligible_population as c on c.state = a.name group by a.name,c.total order by ger) as x where x.ger <= 23.55");
-	avg_ger_data = cursor.fetchall()
-	
-	cursor.execute("select count(x.district_code) as count, (select count(dist_code) from ref_district) as total from (select district_code, count(id) as count from college_institution group by district_code order by count) as x where x.count < 10;")
-	districts_data = cursor.fetchone()
-	districts_ratio = (1.0*districts_data["count"]/districts_data["total"])*100
-
-	# cursor.execute("select avg(college_per_lakh) as avg from college_per_lakh_population")
-	# college_per_lakh = cursor.fetchone()
-	cursor.execute("select a.level, sum(b.appeared_total) as total_appeared, sum(b.passed_total) as total_passed from ref_course_level as a join examination_result as b where a.id = b.course_level_id group by a.level order by a.level desc")
-	outturn_data = cursor.fetchall()
-	outturn_percentage = []
-	for row in outturn_data:
-		outturn = int((row["total_passed"]/row["total_appeared"])*100)
-		temp = {'level': row["level"], 'pass_percent': outturn, 'pass' : row["total_passed"]}
-		outturn_percentage.append(temp)
-
-	# print(outturn_percentage)
-	cursor.execute("select a.speciality, count(b.id) as count, (count(b.id)/(select count(id) from college_institution))*100 as percentage from ref_speciality as a right join college_institution as b on a.id = b.speciality_id group by a.speciality order by count desc;")
-	college_data = cursor.fetchall()
-	college_data = modifyNullSpeciality(college_data)
-	
-	data = {
-	'avg_ger_data' : avg_ger_data,
-	'college_data' : college_data
-	}
-	return render_template('ger.html', DATA=json.dumps(data), districts_ratio=districts_ratio, outturn=outturn_percentage)
 
 
 if __name__ == "__main__":

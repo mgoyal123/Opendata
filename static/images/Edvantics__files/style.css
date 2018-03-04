@@ -38,8 +38,7 @@ th, tr, td {
     height: 370px;
 }
 
-.x-axis-labels .x.axis text {
+#chart-state-ger .x.axis text {
     text-anchor: end !important;
     transform: rotate(-45deg);
 }
-
