@@ -1,7 +1,10 @@
-var data = document.getElementById("data").getAttribute("data-name");
-data = JSON.parse(data);
-PG_data = []
-UG_data = []
+var alldata = document.getElementById("data").getAttribute("data-name");
+alldata = JSON.parse(alldata);
+var top_states = alldata['top_states'];
+var bottom_states = alldata['bottom_states'];
+var data = alldata["enrolment_data"];
+var PG_data = [];
+var UG_data = [];
 
 for(var i in data) {
   if(data[i]["level"] == "Post Graduate"){
@@ -11,14 +14,14 @@ for(var i in data) {
     UG_data.push(data[i]);
   }
 }
-// console.log(PG_data, UG_data);
+console.log(top_states,bottom_states);
 
-var enrolment_by_level_chart = dc.barChart("#chart-enrolment-level");
 var ug_discipline_chart = dc.rowChart("#chart-top-ug");
 var pg_discipline_chart = dc.rowChart("#chart-top-pg");
 
+tabulate(top_states, ['State', 'Average Enrolment', 'Pupil Teacher Ratio'],'#chart-top-enrolment'); 
+tabulate(bottom_states, ['State', 'Average Enrolment', 'Pupil Teacher Ratio'],'#chart-bottom-enrolment');
 drawCharts(data, UG_data, PG_data);
-
 
 $('#statedata').change(function(){
   var state_wise_enrolment = [];
@@ -52,33 +55,16 @@ $('#statedata').change(function(){
 
 
 function drawCharts(data, UG_data, PG_data){
-  var ndx = crossfilter(data),
-  levelDimension  = ndx.dimension(function(d) {return d.level;}),
-  levelCountGroup = levelDimension.group().reduceSum(function(d) {return d.enrollment_count;});
-  var maxVal = levelCountGroup.top(1)[0].value;
 
-  enrolment_by_level_chart
-   .width(900)
-   .height(400) 
-   .x(d3.scale.ordinal())
-   .xUnits(dc.units.ordinal)
-   .brushOn(false)
-   .yAxisLabel("Count")
-   .xAxisLabel("Level")
-   .margins({top: 10, right: 50, bottom: 80, left: 80 })
-   .elasticY(true)
-   .elasticX(true)
-   .gap(30)
-   .dimension(levelDimension)
-   .group(levelCountGroup)
-   .renderlet(function (chart) {
-     chart.selectAll('g.x text')
-        .attr('dx', '-30')
-        .attr('transform', "translate(-15,0) rotate(-75)");
-     });
+  $("#viz").html('');
+  var visualization = d3plus.viz()
+    .container("#viz")  // container DIV to hold the visualization
+    .data(data)  // data to use with the visualization
+    .type("tree_map")   // visualization type
+    .id("level")         // key for which our data is unique on
+    .size("enrollment_count")      // sizing of blocks
+    .draw()             // finally, draw the visualization!
 
-  enrolment_by_level_chart.filter = function() {};
-  enrolment_by_level_chart.ordering(function(d) { return -d.value });
 
   var ndx1 = crossfilter(UG_data),
   ugDisciplineDimension = ndx1.dimension( function(d) { return d.discipline_group_category; }),
@@ -153,3 +139,36 @@ var addYLabel = function(chartToUpdate, displayText) {
                 .attr("y", 10)
                 .text(displayText);
 };
+
+
+function tabulate(data, columns, chart_id) {
+  var table = d3.select(chart_id)
+  var thead = table.append('thead')
+  var tbody = table.append('tbody');
+
+    // append the header row
+  thead.append('tr')
+    .selectAll('th')
+    .data(columns).enter()
+    .append('th')
+      .text(function (column) { return column; });
+
+    // create a row for each object in the data
+  var rows = tbody.selectAll('tr')
+    .data(data)
+    .enter()
+    .append('tr');
+
+    // create a cell in each row for each column
+  var cells = rows.selectAll('td')
+    .data(function (row) {
+      return columns.map(function (column) {
+        return {column: column, value: row[column]};
+      });
+    })
+    .enter()
+    .append('td')
+      .text(function (d) { return d.value; });
+
+  return table;
+}

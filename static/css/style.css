@@ -17,9 +17,10 @@
 	background-color: #D3D3D3;
 }
 
-p:hover {
+#reset:hover {
 	cursor: pointer;
 }
+
 table,tr,th,td {
 	border: 1px solid;
 }
@@ -41,5 +42,13 @@ th, tr, td {
 .x-axis-labels .x.axis text {
     text-anchor: end !important;
     transform: rotate(-45deg);
+}
+
+#viz {
+  height: 400px;
+}
+
+sub{
+  font-size: 14px;
 }
 

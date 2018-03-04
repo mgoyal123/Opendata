@@ -86,17 +86,17 @@ def showInstitutes():
 	college_data = modifyNullSpeciality(data)
 	cursor.execute('select a.name as State, count(b.id) as "No of colleges", c.college_per_lakh as "Colleges per lakh population" from ref_state as a join college_institution as b on a.st_code = b.state_code join college_per_lakh_population as c where a.st_code = c.state_code group by a.name, c.college_per_lakh order by c.college_per_lakh*1 DESC;')
 	data = cursor.fetchall()
-	top_states, bottom_states = findTopBottomStates(data)
-	# print top_states, bottom_states
+	top_states, bottom_states = findTopBottomStates(data, 10)
+	print top_states, bottom_states
 	comibed_data = {'university' : univs_data, 'college' : college_data , 'top_states' : top_states, 'bottom_states' : bottom_states}
 	return render_template('institutions.html', DATA=json.dumps(comibed_data))
 
 
-def findTopBottomStates(data):
+def findTopBottomStates(data, entries):
 	l = len(data)
 	top_states = []
 	bottom_states = []
-	for i in range(0,10):
+	for i in range(0,entries):
 		top_states.append(data[i])
 		bottom_states.append(data[l-i-1])
 
@@ -115,8 +115,13 @@ def modifyNullSpeciality(data):
 @app.route('/enrolment/')
 def showEnrolment():
 	cursor.execute("select a.name, c.level, d.discipline_group_category, b.enrollment_count from ref_state as a join enrolment as b on a.st_code = b.state_code join ref_course_level as c on b.level_id = c.id join ref_broad_discipline_group_category as d on b.broad_discipline_group_category_id = d.id");
+	enrolment_data = cursor.fetchall()
+	cursor.execute("select a.name as State, b.average_enrollment as 'Average Enrolment',c.pupil_teacher_ratio as 'Pupil Teacher Ratio' from ref_state as a join college_per_lakh_population as b on a.st_code = b.state_code join pupil_teacher_ratio as c on c.state = a.name order by average_enrollment*1")
 	data = cursor.fetchall()
-	return render_template('enrollment.html', DATA=json.dumps(data))
+	top_states, bottom_states = findTopBottomStates(data, 10)
+	print top_states,bottom_states
+	comibed_data = {'enrolment_data' : enrolment_data, 'top_states' : top_states, 'bottom_states' : bottom_states}
+	return render_template('enrollment.html', DATA=json.dumps(comibed_data))
 
 
 
