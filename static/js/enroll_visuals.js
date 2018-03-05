@@ -14,7 +14,6 @@ for(var i in data) {
     UG_data.push(data[i]);
   }
 }
-console.log(top_states,bottom_states);
 
 var ug_discipline_chart = dc.rowChart("#chart-top-ug");
 var pg_discipline_chart = dc.rowChart("#chart-top-pg");
