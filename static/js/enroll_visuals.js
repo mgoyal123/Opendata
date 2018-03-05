@@ -61,7 +61,33 @@ function drawCharts(data, UG_data, PG_data){
     .data(data)  // data to use with the visualization
     .type("tree_map")   // visualization type
     .id("level")         // key for which our data is unique on
-    .size("enrollment_count")      // sizing of blocks
+    .size("enrollment_count")      // sizing of blocks  
+    .color(function(d){
+      if (d.level == "Under Graduate"){
+        return '#1ABB9C';
+      }
+      else if(d.level == "Post Graduate"){
+        return '#3498DB';
+      }
+      else if(d.level == "Diploma"){
+        return '#9B59B6';
+      }
+      else if(d.level == "PG Diploma"){
+        return '#b0aac0';
+      }
+      else if(d.level == "Integrated"){
+        return '#34495E';
+      }
+      else if(d.level == "Certificate"){
+        return '#1b8085';
+      }
+      else if(d.level == "Ph.D."){
+        return '#d6cbd3';
+      }
+      else if(d.level == "M.Phil.") {
+        return '#bdcebe';
+      }
+    })
     .draw()             // finally, draw the visualization!
 
 
@@ -83,6 +109,7 @@ function drawCharts(data, UG_data, PG_data){
 
   ug_discipline_chart.filter = function() {};
   ug_discipline_chart.ordering(function(d) { return -d.value });
+  ug_discipline_chart.ordinalColors(['#1ABB9C','#a2b9bc','#3498DB', '#9B59B6', '#9CC2CB','#34495E','#1b8085','#d6cbd3','#bdcebe','#c4b7a6','#b0aac0']);
 
   var ndx2 = crossfilter(PG_data),
   pgDisciplineDimension = ndx2.dimension( function(d) { return d.discipline_group_category; }),
@@ -102,6 +129,7 @@ function drawCharts(data, UG_data, PG_data){
 
   pg_discipline_chart.filter = function() {};
   pg_discipline_chart.ordering(function(d) { return -d.value });
+  pg_discipline_chart.ordinalColors(['#1ABB9C','#a2b9bc','#3498DB', '#9B59B6', '#9CC2CB','#34495E','#1b8085','#d6cbd3','#bdcebe','#c4b7a6','#b0aac0']);
 
   ug_discipline_chart.on("postRender", function(chart) {
     addXLabel(chart, "No of Enrolled Students");

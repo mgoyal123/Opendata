@@ -51,7 +51,6 @@ def showGER():
 	data = cursor.fetchone()
 	pupil_teacher_ratio = (1.0*data["count"]/36)*100
 
-
 	cursor.execute("select a.level, sum(b.appeared_total) as total_appeared, sum(b.passed_total) as total_passed from ref_course_level as a join examination_result as b where a.id = b.course_level_id group by a.level order by a.level desc")
 	outturn_data = cursor.fetchall()
 	outturn_percentage = []

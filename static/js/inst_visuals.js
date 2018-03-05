@@ -5,12 +5,10 @@ var all_college_data = data['college'];
 var top_states = data['top_states'];
 var bottom_states = data['bottom_states'];
 
-
 var univ_by_type_chart = dc.pieChart("#chart-univ-type");
 var univ_by_speciality_chart = dc.barChart("#chart-univ-speciality");
 var colg_by_type_chart = dc.pieChart("#chart-college-type");
 var colg_by_speciality_chart = dc.barChart("#chart-college-speciality");
-
 
 tabulate(top_states, ['State', 'No of colleges', 'Colleges per lakh population'],'#chart-top-college'); 
 tabulate(bottom_states, ['State', 'No of colleges', 'Colleges per lakh population'],'#chart-bottom-college');
@@ -44,6 +42,7 @@ $('#reset').click(function(){
   dc.renderAll();
 })
 
+
 function remove_bins(source_group) { // (source_group, bins...}
     var bins = Array.prototype.slice.call(arguments, 1);
     return {
@@ -54,7 +53,6 @@ function remove_bins(source_group) { // (source_group, bins...}
         }
     };
 }
-
 
 
 function drawCharts(univ_data,college_data){
@@ -142,6 +140,7 @@ function drawCharts(univ_data,college_data){
 
   dc.renderAll();
 }
+
 
 function tabulate(data, columns, chart_id) {
   var table = d3.select(chart_id)

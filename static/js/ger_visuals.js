@@ -8,6 +8,7 @@ var state_ger_chart = dc.barChart("#chart-state-ger");
 var college_by_specilisation_chart = dc.pieChart("#chart-top-college");
 drawCharts(avg_ger_data, college_data);
 
+
 function drawCharts(avg_ger_data, college_data){
   var ndx = crossfilter(avg_ger_data),
   stateDimension  = ndx.dimension(function(d) {return d.name;}),
@@ -27,7 +28,6 @@ function drawCharts(avg_ger_data, college_data){
    .dimension(stateDimension)
    .group(gerGroup)
    .gap(8);
-  
 
    state_ger_chart.filter = function() {};  
 
