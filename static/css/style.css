@@ -17,10 +17,6 @@
 	background-color: #D3D3D3;
 }
 
-#reset:hover {
-	cursor: pointer;
-}
-
 table,tr,th,td {
 	border: 1px solid;
 }
@@ -52,3 +48,14 @@ sub{
   font-size: 14px;
 }
 
+#resetText {
+	display: none;
+}
+
+#reset:hover {
+	cursor: pointer;
+}
+
+.fa-refresh:hover ~ #resetText {
+  display: block;
+}
