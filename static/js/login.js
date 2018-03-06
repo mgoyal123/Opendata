@@ -13,7 +13,7 @@ function signInCallback(authResult) {
 					$('#result').html('Login successful!</br>'+result+'</br>Redirecting...')
 					setTimeout(function(){
 						window.location.href = '/';
-					},1000);
+					},800);
 				}
 				else if(authResult['error']){
 					console.log("There was an error: "+ authResult['error']);
@@ -63,7 +63,7 @@ function sendTokenToServer() {
 					$('#result').html('Login successful!</br>'+result+'</br>Redirecting...')
 					setTimeout(function(){
 						window.location.href = '/';
-					},1000);
+					},800);
 				}
 				else{
 					$('#result').html("Failed to make server side call, check your configuration and console.");

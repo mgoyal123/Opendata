@@ -1,7 +1,7 @@
 $(document).ready(function(){
     setTimeout(function() {
         $('#messages').fadeOut('fast');
-    }, 10000);
+    }, 5000);
 
     $('#menu_toggle').click(function() {
     	if($('#toggle_icon').attr('class') == 'fa fa-angle-double-left'){
